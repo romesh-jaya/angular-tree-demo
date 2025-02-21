@@ -1,3 +1,9 @@
 <div class="card">
-  <p-tree [value]="files" styleClass="w-full md:w-[30rem]"></p-tree>
+  <p-tree
+    [value]="files"
+    styleClass="w-full md:w-[30rem]"
+    selectionMode="single"
+    [(selection)]="selectedInputNode"
+    (onNodeSelect)="onInputNodeSelect($event)"
+  ></p-tree>
 </div>

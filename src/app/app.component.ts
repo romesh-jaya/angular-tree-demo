@@ -12,12 +12,16 @@ const ARRAY_TYPE = 'array';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  selectedInputNode!: TreeNode;
   files!: TreeNode[];
   title = 'angular-blank-app';
 
   constructor(private nodeService: NodeService) {}
 
   ngOnInit() {
+    let treeInput: TreeNode[] = [];
+    let rootPropertyIndex = 0;
+
     const rootProperties = (OrdersSchema as any).default.properties;
     for (let item in rootProperties) {
       if (rootProperties[item].type == OBJECT_TYPE) {
@@ -26,9 +30,20 @@ export class AppComponent {
         console.log(`${item} is array`);
       } else {
         console.log(`${item} is property`);
-      }
 
-      console.log(rootProperties[item]);
+        treeInput.push({
+          key: `${rootPropertyIndex}`,
+          label: item,
+          icon: 'pi pi-fw pi-file',
+        });
+        rootPropertyIndex++;
+      }
     }
+
+    this.files = treeInput;
+  }
+
+  onInputNodeSelect($event) {
+    console.log(`${$event.node.key} selected`);
   }
 }
