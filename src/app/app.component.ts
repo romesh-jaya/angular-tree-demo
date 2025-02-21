@@ -25,22 +25,48 @@ export class AppComponent {
     const rootProperties = (OrdersSchema as any).default.properties;
     for (let item in rootProperties) {
       if (rootProperties[item].type == OBJECT_TYPE) {
-        console.log(`${item} is object`);
+        const objectNode = this.getPropertiesAtFirstLevel(
+          rootProperties[item],
+          `${rootPropertyIndex}-`
+        );
+        treeInput.push({
+          key: `${rootPropertyIndex}`,
+          label: item,
+          icon: 'pi pi-fw pi-inbox',
+          children: objectNode,
+        });
       } else if (rootProperties[item].type == ARRAY_TYPE) {
         console.log(`${item} is array`);
       } else {
-        console.log(`${item} is property`);
-
         treeInput.push({
           key: `${rootPropertyIndex}`,
           label: item,
           icon: 'pi pi-fw pi-file',
         });
-        rootPropertyIndex++;
       }
+      rootPropertyIndex++;
     }
 
     this.files = treeInput;
+  }
+
+  getPropertiesAtFirstLevel(properties, keyPrefix: string) {
+    let treeInput: TreeNode[] = [];
+    let propertyIndex = 0;
+    for (let item in properties) {
+      if (
+        properties[item].type != OBJECT_TYPE &&
+        properties[item].type != ARRAY_TYPE
+      ) {
+        treeInput.push({
+          key: `${keyPrefix}${propertyIndex}`,
+          label: item,
+          icon: 'pi pi-fw pi-file',
+        });
+        propertyIndex++;
+      }
+    }
+    return treeInput;
   }
 
   onInputNodeSelect($event) {
