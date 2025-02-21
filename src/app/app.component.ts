@@ -26,17 +26,31 @@ export class AppComponent {
     for (let item in rootProperties) {
       if (rootProperties[item].type == OBJECT_TYPE) {
         const objectNode = this.getPropertiesAtFirstLevel(
-          rootProperties[item],
+          rootProperties[item].properties,
           `${rootPropertyIndex}-`
         );
         treeInput.push({
           key: `${rootPropertyIndex}`,
-          label: item,
+          label: item + ' (object)',
           icon: 'pi pi-fw pi-inbox',
           children: objectNode,
         });
       } else if (rootProperties[item].type == ARRAY_TYPE) {
-        console.log(`${item} is array`);
+        if (
+          rootProperties[item].items.length > 0 &&
+          rootProperties[item].items[0].type == OBJECT_TYPE
+        ) {
+          const objectNode = this.getPropertiesAtFirstLevel(
+            rootProperties[item].items[0].properties,
+            `${rootPropertyIndex}-`
+          );
+          treeInput.push({
+            key: `${rootPropertyIndex}`,
+            label: item + ' (array)',
+            icon: 'pi pi-fw pi-server',
+            children: objectNode,
+          });
+        }
       } else {
         treeInput.push({
           key: `${rootPropertyIndex}`,
