@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { NodeService } from './service/nodeservice';
+import * as OrdersSchema from './orders-schema.json';
+
+const OBJECT_TYPE = 'object';
+const ARRAY_TYPE = 'array';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +18,17 @@ export class AppComponent {
   constructor(private nodeService: NodeService) {}
 
   ngOnInit() {
-    this.nodeService.getFiles().then((data) => (this.files = data));
+    const rootProperties = (OrdersSchema as any).default.properties;
+    for (let item in rootProperties) {
+      if (rootProperties[item].type == OBJECT_TYPE) {
+        console.log(`${item} is object`);
+      } else if (rootProperties[item].type == ARRAY_TYPE) {
+        console.log(`${item} is array`);
+      } else {
+        console.log(`${item} is property`);
+      }
+
+      console.log(rootProperties[item]);
+    }
   }
 }

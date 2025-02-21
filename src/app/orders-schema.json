@@ -1,0 +1,143 @@
+
+
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "orderId": {
+      "type": "string"
+    },
+    "customer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "zipCode": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "street",
+            "city",
+            "state",
+            "zipCode"
+          ]
+        },
+        "isMember": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "email",
+        "address",
+        "isMember"
+      ]
+    },
+    "products": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "productId": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "price": {
+              "type": "number"
+            },
+            "image": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "productId",
+            "name",
+            "quantity",
+            "price",
+            "image",
+            "color"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "productId": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "price": {
+              "type": "integer"
+            },
+            "image": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "productId",
+            "name",
+            "quantity",
+            "price",
+            "image",
+            "color"
+          ]
+        }
+      ]
+    },
+    "orderDate": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "isPaid": {
+      "type": "boolean"
+    },
+    "totalAmount": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "orderId",
+    "customer",
+    "products",
+    "orderDate",
+    "status",
+    "isPaid",
+    "totalAmount"
+  ]
+}
+
