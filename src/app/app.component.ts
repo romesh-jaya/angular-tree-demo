@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { NodeService } from './service/nodeservice';
-import * as OrdersSchema from './orders-schema.json';
+import * as OrdersInputSchema from './orders-schema-input.json';
+import * as OrdersSchemaExpectedOutput from './orders-schema-expected-output.json';
 
 const OBJECT_TYPE = 'object';
 const ARRAY_TYPE = 'array';
@@ -13,14 +13,22 @@ const ARRAY_TYPE = 'array';
 })
 export class AppComponent {
   inputSchemaTreeData!: TreeNode[];
+  expectedOutputSchemaTreeData!: TreeNode[];
 
-  constructor(private nodeService: NodeService) {}
+  constructor() {}
 
   ngOnInit() {
+    this.inputSchemaTreeData = this.populateTreeControl(OrdersInputSchema);
+    this.expectedOutputSchemaTreeData = this.populateTreeControl(
+      OrdersSchemaExpectedOutput
+    );
+  }
+
+  populateTreeControl(schema) {
     let treeInput: TreeNode[] = [];
     let rootPropertyIndex = 0;
 
-    const rootProperties = (OrdersSchema as any).default.properties;
+    const rootProperties = (schema as any).default.properties;
     for (let item in rootProperties) {
       if (rootProperties[item].type == OBJECT_TYPE) {
         const objectNode = this.getPropertiesAtFirstLevel(
@@ -59,7 +67,7 @@ export class AppComponent {
       rootPropertyIndex++;
     }
 
-    this.inputSchemaTreeData = treeInput;
+    return treeInput;
   }
 
   getPropertiesAtFirstLevel(properties, keyPrefix: string) {

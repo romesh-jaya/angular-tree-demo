@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "customer": {
+      "type": "object",
+      "properties": {
+        "customername": {
+          "type": "string"
+        },
+        "customeremail": {
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "zipCode": {
+              "type": "string"
+            }
+          },
+          "required": ["street", "city", "state", "zipCode"]
+        }
+      },
+      "required": ["name", "email", "address", "isMember"]
+    },
+    "products": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "productname": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "productprice": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "productId",
+            "name",
+            "quantity",
+            "price",
+            "image",
+            "color"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "productId": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "price": {
+              "type": "integer"
+            },
+            "image": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "productId",
+            "name",
+            "quantity",
+            "price",
+            "image",
+            "color"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "orderId",
+    "customer",
+    "products",
+    "orderDate",
+    "status",
+    "isPaid",
+    "totalAmount"
+  ]
+}
