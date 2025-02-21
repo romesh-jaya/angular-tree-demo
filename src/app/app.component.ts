@@ -6,6 +6,11 @@ import * as OrdersSchemaExpectedOutput from './orders-schema-expected-output.jso
 const OBJECT_TYPE = 'object';
 const ARRAY_TYPE = 'array';
 
+type Connection = {
+  inputPath: string;
+  outputPath: string;
+};
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,6 +19,9 @@ const ARRAY_TYPE = 'array';
 export class AppComponent {
   inputSchemaTreeData!: TreeNode[];
   expectedOutputSchemaTreeData!: TreeNode[];
+  selectedPathInputSchema!: string;
+  selectedPathExpectedOutputSchema!: string;
+  connections: Connection[] = [];
 
   constructor() {}
 
@@ -33,13 +41,15 @@ export class AppComponent {
       if (rootProperties[item].type == OBJECT_TYPE) {
         const objectNode = this.getPropertiesAtFirstLevel(
           rootProperties[item].properties,
-          `${rootPropertyIndex}-`
+          `${rootPropertyIndex}-`,
+          item
         );
         treeInput.push({
           key: `${rootPropertyIndex}`,
           label: item + ' (object)',
           icon: 'pi pi-fw pi-inbox',
           children: objectNode,
+          selectable: false,
         });
       } else if (rootProperties[item].type == ARRAY_TYPE) {
         if (
@@ -48,13 +58,15 @@ export class AppComponent {
         ) {
           const objectNode = this.getPropertiesAtFirstLevel(
             rootProperties[item].items[0].properties,
-            `${rootPropertyIndex}-`
+            `${rootPropertyIndex}-`,
+            item
           );
           treeInput.push({
             key: `${rootPropertyIndex}`,
             label: item + ' (array)',
             icon: 'pi pi-fw pi-server',
             children: objectNode,
+            selectable: false,
           });
         }
       } else {
@@ -62,6 +74,7 @@ export class AppComponent {
           key: `${rootPropertyIndex}`,
           label: item,
           icon: 'pi pi-fw pi-file',
+          data: item,
         });
       }
       rootPropertyIndex++;
@@ -70,7 +83,7 @@ export class AppComponent {
     return treeInput;
   }
 
-  getPropertiesAtFirstLevel(properties, keyPrefix: string) {
+  getPropertiesAtFirstLevel(properties, keyPrefix: string, pathPrefix: string) {
     let treeInput: TreeNode[] = [];
     let propertyIndex = 0;
     for (let item in properties) {
@@ -82,6 +95,7 @@ export class AppComponent {
           key: `${keyPrefix}${propertyIndex}`,
           label: item,
           icon: 'pi pi-fw pi-file',
+          data: `${pathPrefix} -> ${item}`,
         });
         propertyIndex++;
       }
@@ -90,6 +104,23 @@ export class AppComponent {
   }
 
   onInputNodeSelect($event, isInput: boolean) {
-    console.log(`${$event.node.key} selected`);
+    if (isInput) {
+      this.selectedPathInputSchema = $event.node.data;
+    } else {
+      this.selectedPathExpectedOutputSchema = $event.node.data;
+    }
+  }
+
+  onConnectClicked() {
+    this.connections.push({
+      inputPath: this.selectedPathInputSchema,
+      outputPath: this.selectedPathExpectedOutputSchema,
+    });
+    this.selectedPathExpectedOutputSchema = '';
+    this.selectedPathInputSchema = '';
+  }
+
+  onClearClicked() {
+    this.connections = [];
   }
 }
