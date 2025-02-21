@@ -12,9 +12,7 @@ const ARRAY_TYPE = 'array';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  selectedInputNode!: TreeNode;
-  files!: TreeNode[];
-  title = 'angular-blank-app';
+  inputSchemaTreeData!: TreeNode[];
 
   constructor(private nodeService: NodeService) {}
 
@@ -61,7 +59,7 @@ export class AppComponent {
       rootPropertyIndex++;
     }
 
-    this.files = treeInput;
+    this.inputSchemaTreeData = treeInput;
   }
 
   getPropertiesAtFirstLevel(properties, keyPrefix: string) {
@@ -83,7 +81,7 @@ export class AppComponent {
     return treeInput;
   }
 
-  onInputNodeSelect($event) {
+  onInputNodeSelect($event, isInput: boolean) {
     console.log(`${$event.node.key} selected`);
   }
 }

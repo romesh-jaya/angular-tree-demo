@@ -1,9 +1,18 @@
-<div class="card">
-  <p-tree
-    [value]="files"
-    styleClass="w-full md:w-[30rem]"
-    selectionMode="single"
-    [(selection)]="selectedInputNode"
-    (onNodeSelect)="onInputNodeSelect($event)"
-  ></p-tree>
+<div class="card row">
+  <div class="col-6">
+    <h4>Input Schema</h4>
+    <p-tree
+      [value]="inputSchemaTreeData"
+      selectionMode="single"
+      (onNodeSelect)="onInputNodeSelect($event, true)"
+    ></p-tree>
+  </div>
+  <div class="col-6">
+    <h4>Expected Output Schema</h4>
+    <p-tree
+      [value]="inputSchemaTreeData"
+      selectionMode="single"
+      (onNodeSelect)="onInputNodeSelect($event, false)"
+    ></p-tree>
+  </div>
 </div>
