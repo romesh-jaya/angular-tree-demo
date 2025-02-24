@@ -62,4 +62,16 @@
       </ng-template>
     </p-table>
   </div>
+
+  <div class="container row my-2" *ngIf="connections.length > 0">
+    <h4 class="mt-3">Generated MappingRuleConfig</h4>
+    <div class="col-12">
+      <textarea
+        [value]="mappingRuleConfigString"
+        disabled
+        class="w-100"
+        rows="100"
+      ></textarea>
+    </div>
+  </div>
 </div>

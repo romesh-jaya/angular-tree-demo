@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import * as OrdersInputSchema from './orders-schema-input.json';
 import * as OrdersSchemaExpectedOutput from './orders-schema-expected-output.json';
+import { MappingRuleConfig, TruthTable } from './models';
 
 const OBJECT_TYPE = 'object';
 const ARRAY_TYPE = 'array';
@@ -23,6 +24,7 @@ export class AppComponent {
   selectedPathExpectedOutputSchema!: string;
   selectedNodeExpectedOutputSchema?: TreeNode;
   connections: Connection[] = [];
+  mappingRuleConfigString = '';
 
   constructor() {}
 
@@ -124,6 +126,8 @@ export class AppComponent {
       this.selectedNodeExpectedOutputSchema.selectable = false;
       this.selectedNodeExpectedOutputSchema.icon = 'pi pi-fw pi-check';
     }
+
+    this.generateMappingRuleConfig();
   }
 
   onClearClicked() {
@@ -135,5 +139,27 @@ export class AppComponent {
     this.selectedPathExpectedOutputSchema = '';
     this.selectedPathInputSchema = '';
     this.selectedNodeExpectedOutputSchema = undefined;
+  }
+
+  generateMappingRuleConfig() {
+    let retVal: { MappingRuleConfig: MappingRuleConfig } = {
+      MappingRuleConfig: {
+        DestinationType: 'YourNamespace.Customer',
+        TruthTable: [],
+      },
+    };
+
+    this.connections.forEach((connection) => {
+      let sourcePath = connection.inputPath.split(' -> ').join('.');
+      let destinationPath = connection.outputPath.split(' -> ').join('.');
+
+      retVal.MappingRuleConfig.TruthTable.push({
+        SourcePath: '$.' + sourcePath,
+        DestinationPath: destinationPath,
+        DataType: 'string',
+      });
+    });
+
+    this.mappingRuleConfigString = JSON.stringify(retVal, null, 2);
   }
 }
