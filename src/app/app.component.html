@@ -1,3 +1,16 @@
+<div class="container text-right mt-2">
+  <button class="btn btn-info mr-2" (click)="onClearClicked()">
+    Clear Mapping
+  </button>
+  <button
+    class="btn btn-primary"
+    (click)="onConnectClicked()"
+    [disabled]="!selectedPathInputSchema || !selectedPathExpectedOutputSchema"
+  >
+    Connect
+  </button>
+</div>
+
 <div class="container row">
   <div class="col-6">
     <h4>Input Schema</h4>
@@ -24,20 +37,6 @@
           >Please select a Node</span
         >
       </p>
-      <div>
-        <button class="btn btn-info mr-2" (click)="onClearClicked()">
-          Clear All
-        </button>
-        <button
-          class="btn btn-primary"
-          (click)="onConnectClicked()"
-          [disabled]="
-            !selectedPathInputSchema || !selectedPathExpectedOutputSchema
-          "
-        >
-          Connect
-        </button>
-      </div>
     </div>
     <p-tree
       [value]="expectedOutputSchemaTreeData"
@@ -47,7 +46,7 @@
   </div>
 
   <div class="container row" *ngIf="connections.length > 0">
-    <h4 class="mt-3">Connections</h4>
+    <h4 class="mt-3">Mapping</h4>
     <p-table [value]="connections" class="w-100">
       <ng-template pTemplate="header">
         <tr>

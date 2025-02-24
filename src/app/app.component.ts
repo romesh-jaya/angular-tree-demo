@@ -21,6 +21,7 @@ export class AppComponent {
   expectedOutputSchemaTreeData!: TreeNode[];
   selectedPathInputSchema!: string;
   selectedPathExpectedOutputSchema!: string;
+  selectedNodeExpectedOutputSchema?: TreeNode;
   connections: Connection[] = [];
 
   constructor() {}
@@ -108,6 +109,7 @@ export class AppComponent {
       this.selectedPathInputSchema = $event.node.data;
     } else {
       this.selectedPathExpectedOutputSchema = $event.node.data;
+      this.selectedNodeExpectedOutputSchema = $event.node;
     }
   }
 
@@ -118,9 +120,20 @@ export class AppComponent {
     });
     this.selectedPathExpectedOutputSchema = '';
     this.selectedPathInputSchema = '';
+    if (this.selectedNodeExpectedOutputSchema) {
+      this.selectedNodeExpectedOutputSchema.selectable = false;
+      this.selectedNodeExpectedOutputSchema.icon = 'pi pi-fw pi-check';
+    }
   }
 
   onClearClicked() {
     this.connections = [];
+    this.inputSchemaTreeData = this.populateTreeControl(OrdersInputSchema);
+    this.expectedOutputSchemaTreeData = this.populateTreeControl(
+      OrdersSchemaExpectedOutput
+    );
+    this.selectedPathExpectedOutputSchema = '';
+    this.selectedPathInputSchema = '';
+    this.selectedNodeExpectedOutputSchema = undefined;
   }
 }
