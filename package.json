@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
+    "@iplab/ngx-file-upload": "^13.0.0",
     "bootstrap": "^4.6.2",
     "primeflex": "^3.2.1",
     "primeicons": "^5.0.0",

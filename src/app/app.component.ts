@@ -3,6 +3,10 @@ import { TreeNode } from 'primeng/api';
 import * as OrdersInputSchema from './orders-schema-input.json';
 import * as OrdersSchemaExpectedOutput from './orders-schema-expected-output.json';
 import { MappingRuleConfig, TruthTable } from './models';
+import {
+  FileUploadControl,
+  FileUploadValidators,
+} from '@iplab/ngx-file-upload';
 
 const OBJECT_TYPE = 'object';
 const ARRAY_TYPE = 'array';
@@ -25,6 +29,16 @@ export class AppComponent {
   selectedNodeExpectedOutputSchema?: TreeNode;
   connections: Connection[] = [];
   mappingRuleConfigString = '';
+  allowedMimeTypes = ['application/json'];
+  inputJsonUploadControl = new FileUploadControl(
+    {
+      listVisible: true,
+      discardInvalid: true,
+      multiple: false,
+      accept: this.allowedMimeTypes,
+    },
+    [FileUploadValidators.accept(this.allowedMimeTypes)]
+  );
 
   constructor() {}
 
