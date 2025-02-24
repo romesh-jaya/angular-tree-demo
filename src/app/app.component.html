@@ -24,6 +24,7 @@
       [value]="inputSchemaTreeData"
       selectionMode="single"
       (onNodeSelect)="onInputNodeSelect($event, true)"
+      scrollHeight="400px"
     ></p-tree>
   </div>
   <div class="col-6 schema">
@@ -42,6 +43,7 @@
       [value]="expectedOutputSchemaTreeData"
       selectionMode="single"
       (onNodeSelect)="onInputNodeSelect($event, false)"
+      scrollHeight="400px"
     ></p-tree>
   </div>
 
@@ -52,12 +54,14 @@
         <tr>
           <th>Input Schema</th>
           <th>Output Schema</th>
+          <th>Data type</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-connection>
         <tr>
           <td>{{ connection.inputPath }}</td>
           <td>{{ connection.outputPath }}</td>
+          <td>{{ connection.type }}</td>
         </tr>
       </ng-template>
     </p-table>

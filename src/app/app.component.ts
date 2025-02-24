@@ -14,6 +14,12 @@ const ARRAY_TYPE = 'array';
 type Connection = {
   inputPath: string;
   outputPath: string;
+  type: string;
+};
+
+type DatatypeMap = {
+  inputType: string;
+  outputType: string;
 };
 
 @Component({
@@ -30,6 +36,11 @@ export class AppComponent {
   connections: Connection[] = [];
   mappingRuleConfigString = '';
   allowedMimeTypes = ['application/json'];
+  datatypeMap: DatatypeMap[] = [
+    { inputType: 'integer', outputType: 'int' },
+    { inputType: 'number', outputType: 'long' },
+    { inputType: 'boolean', outputType: 'bool' },
+  ];
   inputJsonUploadControl = new FileUploadControl(
     {
       listVisible: true,
@@ -92,10 +103,13 @@ export class AppComponent {
           label: item,
           icon: 'pi pi-fw pi-file',
           data: item,
+          type: rootProperties[item].type,
         });
       }
       rootPropertyIndex++;
     }
+
+    console.log('treeInput', treeInput);
 
     return treeInput;
   }
@@ -113,6 +127,7 @@ export class AppComponent {
           label: item,
           icon: 'pi pi-fw pi-file',
           data: `${pathPrefix} -> ${item}`,
+          type: properties[item].type,
         });
         propertyIndex++;
       }
@@ -133,6 +148,7 @@ export class AppComponent {
     this.connections.push({
       inputPath: this.selectedPathInputSchema,
       outputPath: this.selectedPathExpectedOutputSchema,
+      type: this.selectedNodeExpectedOutputSchema?.type || '',
     });
     this.selectedPathExpectedOutputSchema = '';
     this.selectedPathInputSchema = '';
@@ -170,10 +186,17 @@ export class AppComponent {
       retVal.MappingRuleConfig.TruthTable.push({
         SourcePath: '$.' + sourcePath,
         DestinationPath: destinationPath,
-        DataType: 'string',
+        DataType: this.getMappedDataType(connection.type) ?? connection.type,
       });
     });
 
     this.mappingRuleConfigString = JSON.stringify(retVal, null, 2);
+  }
+
+  getMappedDataType(inputType: string) {
+    let mappedType = this.datatypeMap.find(
+      (item) => item.inputType == inputType
+    );
+    return mappedType?.outputType;
   }
 }
