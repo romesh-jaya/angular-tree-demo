@@ -13,9 +13,11 @@ const OBJECT_TYPE = 'object';
 const ARRAY_TYPE = 'array';
 
 type Connection = {
-  inputPath: string;
-  outputPath: string;
+  inputSchemaAttribute: string;
+  outputSchemaAttribute: string;
   type: string;
+  inputSchemaParent: string;
+  outputSchemaParent: string;
 };
 
 type DatatypeMap = {
@@ -34,6 +36,7 @@ export class AppComponent {
   selectedPathInputSchema!: string;
   selectedPathExpectedOutputSchema!: string;
   selectedNodeExpectedOutputSchema?: TreeNode;
+  selectedNodeExpectedInputSchema?: TreeNode;
   connections: Connection[] = [];
   mappingRuleConfigString = '';
   allowedMimeTypes = ['application/json'];
@@ -77,6 +80,7 @@ export class AppComponent {
           key: `${rootPropertyIndex}`,
           label: item + ' (object)',
           icon: 'pi pi-fw pi-inbox',
+          data: item,
           children: objectNode,
           selectable: false,
         });
@@ -93,6 +97,7 @@ export class AppComponent {
           treeInput.push({
             key: `${rootPropertyIndex}`,
             label: item + ' (array)',
+            data: item,
             icon: 'pi pi-fw pi-server',
             children: objectNode,
             selectable: false,
@@ -109,8 +114,6 @@ export class AppComponent {
       }
       rootPropertyIndex++;
     }
-
-    console.log('treeInput', treeInput);
 
     return treeInput;
   }
@@ -139,6 +142,7 @@ export class AppComponent {
   onInputNodeSelect($event, isInput: boolean) {
     if (isInput) {
       this.selectedPathInputSchema = $event.node.data;
+      this.selectedNodeExpectedInputSchema = $event.node;
     } else {
       this.selectedPathExpectedOutputSchema = $event.node.data;
       this.selectedNodeExpectedOutputSchema = $event.node;
@@ -146,10 +150,20 @@ export class AppComponent {
   }
 
   onConnectClicked() {
+    let sourcePathArray = this.selectedPathInputSchema.split(' -> ');
+    let sourcePath = sourcePathArray[sourcePathArray.length - 1];
+    let destinationPathArray =
+      this.selectedPathExpectedOutputSchema.split(' -> ');
+    let destinationPath = destinationPathArray[destinationPathArray.length - 1];
+
     this.connections.push({
-      inputPath: this.selectedPathInputSchema,
-      outputPath: this.selectedPathExpectedOutputSchema,
+      inputSchemaAttribute: sourcePath,
+      outputSchemaAttribute: destinationPath,
       type: this.selectedNodeExpectedOutputSchema?.type || '',
+      inputSchemaParent:
+        this.selectedNodeExpectedInputSchema?.parent?.data || '',
+      outputSchemaParent:
+        this.selectedNodeExpectedOutputSchema?.parent?.data || '',
     });
     this.selectedPathExpectedOutputSchema = '';
     this.selectedPathInputSchema = '';
@@ -169,6 +183,7 @@ export class AppComponent {
     );
     this.selectedPathExpectedOutputSchema = '';
     this.selectedPathInputSchema = '';
+    this.selectedNodeExpectedInputSchema = undefined;
     this.selectedNodeExpectedOutputSchema = undefined;
   }
 
@@ -181,8 +196,10 @@ export class AppComponent {
     };
 
     this.connections.forEach((connection) => {
-      let sourcePath = connection.inputPath.split(' -> ').join('.');
-      let destinationPath = connection.outputPath.split(' -> ').join('.');
+      let sourcePath = connection.inputSchemaAttribute.split(' -> ').join('.');
+      let destinationPath = connection.outputSchemaAttribute
+        .split(' -> ')
+        .join('.');
 
       retVal.MappingRuleConfig.TruthTable.push({
         SourceColumn: '$.' + sourcePath,

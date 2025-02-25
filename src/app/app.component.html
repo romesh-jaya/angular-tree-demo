@@ -52,16 +52,19 @@
     <p-table [value]="connections" class="w-100">
       <ng-template pTemplate="header">
         <tr>
-          <th>Input Schema</th>
-          <th>Output Schema</th>
+          <th>Input Schema Attribute</th>
+          <th>Input Schema Parent</th>
+          <th>Output Schema Attribute</th>
+          <th>Output Schema Parent</th>
           <th>Data type</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-connection>
         <tr>
-          <td>{{ connection.inputPath }}</td>
-          <td>{{ connection.outputPath }}</td>
-          <td>{{ connection.type }}</td>
+          <td>{{ connection.inputSchemaAttribute }}</td>
+          <td>{{ connection.inputSchemaParent }}</td>
+          <td>{{ connection.outputSchemaAttribute }}</td>
+          <td>{{ connection.outputSchemaParent }}</td>
         </tr>
       </ng-template>
     </p-table>
