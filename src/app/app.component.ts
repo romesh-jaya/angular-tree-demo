@@ -201,16 +201,26 @@ export class AppComponent {
       },
     };
 
-    this.connections.forEach((connection) => {
-      let sourcePath = connection.inputSchemaAttribute.split(' -> ').join('.');
-      let destinationPath = connection.outputSchemaAttribute
-        .split(' -> ')
-        .join('.');
+    const groupedResults = this.groupBy(
+      this.connections,
+      (item) => item.outputSchemaParent
+    );
 
-      retVal.MappingRuleConfig.TruthTable.push({
-        SourceColumn: '$.' + sourcePath,
-        DestinationColumn: destinationPath,
-        DataType: this.getMappedDataType(connection.type) ?? connection.type,
+    const keys = Object.keys(groupedResults);
+    keys.forEach((key) => {
+      let connections = groupedResults[key];
+      connections.forEach((connection) => {
+        retVal.MappingRuleConfig.TruthTable.push({
+          SourceColumn:
+            (connection.inputSchemaParent
+              ? `${connection.inputSchemaParent}.`
+              : '$.') + connection.inputSchemaAttribute,
+          DestinationColumn:
+            (connection.outputSchemaParent
+              ? `${connection.outputSchemaParent}.`
+              : '') + connection.outputSchemaAttribute,
+          DataType: this.getMappedDataType(connection.type) ?? connection.type,
+        });
       });
     });
 
@@ -262,5 +272,20 @@ export class AppComponent {
       };
       reader.readAsText(file);
     });
+  }
+
+  groupBy<T>(
+    array: T[],
+    keyGetter: (item: T) => string
+  ): { [key: string]: T[] } {
+    const map: { [key: string]: T[] } = {};
+    array.forEach((item) => {
+      const key = keyGetter(item);
+      if (!map[key]) {
+        map[key] = [];
+      }
+      map[key].push(item);
+    });
+    return map;
   }
 }
