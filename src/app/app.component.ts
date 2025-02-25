@@ -174,7 +174,7 @@ export class AppComponent {
   generateMappingRuleConfig() {
     let retVal: { MappingRuleConfig: MappingRuleConfig } = {
       MappingRuleConfig: {
-        DestinationType: 'YourNamespace.Customer',
+        DestinationType: 'HT.Shared.Models.JsonToJson.CustomerOrder',
         TruthTable: [],
       },
     };
@@ -184,8 +184,8 @@ export class AppComponent {
       let destinationPath = connection.outputPath.split(' -> ').join('.');
 
       retVal.MappingRuleConfig.TruthTable.push({
-        SourcePath: '$.' + sourcePath,
-        DestinationPath: destinationPath,
+        SourceColumn: '$.' + sourcePath,
+        DestinationColumn: destinationPath,
         DataType: this.getMappedDataType(connection.type) ?? connection.type,
       });
     });

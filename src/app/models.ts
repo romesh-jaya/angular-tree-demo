@@ -1,6 +1,6 @@
 export type TruthTable = {
-  SourcePath: string;
-  DestinationPath: string;
+  SourceColumn: string;
+  DestinationColumn: string;
   DataType: string;
 };
 
