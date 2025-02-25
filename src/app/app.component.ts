@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import * as OrdersInputSchema from './orders-schema-input.json';
 import * as OrdersSchemaExpectedOutput from './orders-schema-expected-output.json';
-import { MappingRuleConfig, TruthTable } from './models';
+import { MappingRuleConfig } from './models';
+import { HttpClient } from '@angular/common/http';
 import {
   FileUploadControl,
   FileUploadValidators,
@@ -51,7 +52,7 @@ export class AppComponent {
     [FileUploadValidators.accept(this.allowedMimeTypes)]
   );
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.inputSchemaTreeData = this.populateTreeControl(OrdersInputSchema);
@@ -198,5 +199,45 @@ export class AppComponent {
       (item) => item.inputType == inputType
     );
     return mappedType?.outputType;
+  }
+
+  async onTestClicked() {
+    let fileContent = '';
+    if (this.inputJsonUploadControl.value.length > 0) {
+      const documenturl = await this.readDocument(
+        this.inputJsonUploadControl.value[0]
+      );
+      fileContent = <string>documenturl.url;
+    }
+
+    this.http
+      .post('https://localhost:44358/api/HtApifuncconfig/TestTransformation', {
+        mapperConfig: this.mappingRuleConfigString,
+        inputJson: fileContent,
+      })
+      .subscribe(
+        (val) => {
+          console.log('POST call successful value returned in body', val);
+        },
+        (response) => {
+          alert(response.error);
+        }
+      );
+  }
+
+  async readDocument(
+    file: File
+  ): Promise<{ file: any; url: string | ArrayBuffer }> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve({ file, url: reader.result || '' });
+      };
+      reader.onerror = (error: any) => {
+        alert('unknownerrorwhilereadingfile');
+        reject(error);
+      };
+      reader.readAsText(file);
+    });
   }
 }
