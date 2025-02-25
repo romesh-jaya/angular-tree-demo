@@ -165,6 +165,12 @@ export class AppComponent {
       outputSchemaParent:
         this.selectedNodeExpectedOutputSchema?.parent?.data || '',
     });
+
+    // sort by Output Schema Parent
+    this.connections.sort((a, b) =>
+      a.outputSchemaParent.localeCompare(b.outputSchemaParent)
+    );
+
     this.selectedPathExpectedOutputSchema = '';
     this.selectedPathInputSchema = '';
     if (this.selectedNodeExpectedOutputSchema) {
