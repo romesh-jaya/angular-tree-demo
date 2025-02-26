@@ -1,19 +1,17 @@
-
-
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "orderId": {
+    "id": {
       "type": "string"
     },
     "customer": {
       "type": "object",
       "properties": {
-        "name": {
+        "customername": {
           "type": "string"
         },
-        "email": {
+        "customeremail": {
           "type": "string"
         },
         "address": {
@@ -32,47 +30,34 @@
               "type": "string"
             }
           },
-          "required": [
-            "street",
-            "city",
-            "state",
-            "zipCode"
-          ]
-        },
-        "isMember": {
-          "type": "boolean"
+          "required": ["street", "city", "state", "zipCode"]
         }
       },
-      "required": [
-        "name",
-        "email",
-        "address",
-        "isMember"
-      ]
+      "required": ["name", "email", "address", "isMember"]
     },
+	"orderTotal": {
+      "type": "integer"
+    },
+	"isCustomerRegistered": {
+	  "type": "boolean"
+	},	
     "products": {
       "type": "array",
       "items": [
         {
           "type": "object",
           "properties": {
-            "productId": {
+            "id": {
               "type": "string"
             },
-            "name": {
+            "productname": {
               "type": "string"
             },
             "quantity": {
               "type": "integer"
             },
-            "price": {
+            "productprice": {
               "type": "number"
-            },
-            "image": {
-              "type": "string"
-            },
-            "color": {
-              "type": "string"
             }
           },
           "required": [
@@ -116,18 +101,6 @@
           ]
         }
       ]
-    },
-    "orderDate": {
-      "type": "string"
-    },
-    "status": {
-      "type": "string"
-    },
-    "isPaid": {
-      "type": "boolean"
-    },
-    "totalAmount": {
-      "type": "integer"
     }
   },
   "required": [
@@ -140,4 +113,3 @@
     "totalAmount"
   ]
 }
-

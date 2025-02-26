@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import * as OrdersInputSchema from './orders-schema-input.json';
-import * as OrdersSchemaExpectedOutput from './orders-schema-expected-output.json';
+import * as OrdersInputSchema from './samples/orders-schema-input.json';
+import * as OrdersSchemaExpectedOutput from './samples/orders-schema-expected-output.json';
 import { MappingRuleConfig, TruthTableMapping } from './models';
 import { HttpClient } from '@angular/common/http';
 import {

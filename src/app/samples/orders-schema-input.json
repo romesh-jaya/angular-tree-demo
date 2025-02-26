@@ -1,17 +1,19 @@
+
+
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "id": {
+    "orderId": {
       "type": "string"
     },
-    "customer": {
+	"customername": {
+	  "type": "string"
+	},	
+    "customerinfo": {
       "type": "object",
       "properties": {
-        "customername": {
-          "type": "string"
-        },
-        "customeremail": {
+        "email": {
           "type": "string"
         },
         "address": {
@@ -30,10 +32,22 @@
               "type": "string"
             }
           },
-          "required": ["street", "city", "state", "zipCode"]
+          "required": [
+            "street",
+            "city",
+            "state",
+            "zipCode"
+          ]
+        },
+        "isMember": {
+          "type": "boolean"
         }
       },
-      "required": ["name", "email", "address", "isMember"]
+      "required": [
+        "email",
+        "address",
+        "isMember"
+      ]
     },
     "products": {
       "type": "array",
@@ -41,17 +55,23 @@
         {
           "type": "object",
           "properties": {
-            "id": {
+            "productId": {
               "type": "string"
             },
-            "productname": {
+            "name": {
               "type": "string"
             },
             "quantity": {
               "type": "integer"
             },
-            "productprice": {
+            "price": {
               "type": "number"
+            },
+            "image": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
             }
           },
           "required": [
@@ -95,6 +115,18 @@
           ]
         }
       ]
+    },
+    "orderDate": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "isPaid": {
+      "type": "boolean"
+    },
+    "totalAmount": {
+      "type": "integer"
     }
   },
   "required": [
@@ -107,3 +139,4 @@
     "totalAmount"
   ]
 }
+

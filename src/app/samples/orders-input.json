@@ -1,0 +1,36 @@
+{
+  "orderId": "A12345",
+  "customername": "Jane Doe",
+  "customerinfo": {
+    "email": "jane.doe@example.com",
+    "address": {
+      "street": "123 Main St",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001"
+    },
+    "isMember": true
+  },
+  "products": [
+    {
+      "productId": "P001",
+      "name": "Wireless Mouse",
+      "quantity": 2,
+      "price": 25.5,
+      "image": "https://example.com/wireless-mouse.jpg",
+      "color": "#3498db"
+    },
+    {
+      "productId": "P002",
+      "name": "Keyboard",
+      "quantity": 1,
+      "price": 45,
+      "image": "https://example.com/keyboard.jpg",
+      "color": "#2ecc71"
+    }
+  ],
+  "orderDate": "2025-01-02T10:15:30Z",
+  "status": "Processing",
+  "isPaid": false,
+  "totalAmount": 96
+}
