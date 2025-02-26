@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import * as OrdersInputSchema from './orders-schema-input.json';
 import * as OrdersSchemaExpectedOutput from './orders-schema-expected-output.json';
-import { MappingRuleConfig } from './models';
+import { MappingRuleConfig, TruthTableMapping } from './models';
 import { HttpClient } from '@angular/common/http';
 import {
   FileUploadControl,
@@ -208,9 +208,12 @@ export class AppComponent {
 
     const keys = Object.keys(groupedResults);
     keys.forEach((key) => {
+      console.log('Mapping for key: ', key);
       let connections = groupedResults[key];
+      let truthTable: TruthTableMapping[] = [];
       connections.forEach((connection) => {
-        retVal.MappingRuleConfig.TruthTable.push({
+        // first create the truth table
+        truthTable.push({
           SourceColumn:
             (connection.inputSchemaParent
               ? `${connection.inputSchemaParent}.`
@@ -222,6 +225,21 @@ export class AppComponent {
           DataType: this.getMappedDataType(connection.type) ?? connection.type,
         });
       });
+
+      // push the truth table at root level or nested level
+      if (!key) {
+        retVal.MappingRuleConfig.TruthTable = truthTable;
+      } else {
+        retVal.MappingRuleConfig.TruthTable.push({
+          SourceColumn: '', // purposely left empty
+          DestinationColumn: key,
+          DataType: OBJECT_TYPE,
+          ComplexType: {
+            DestinationType: key,
+            TruthTable: truthTable,
+          },
+        });
+      }
     });
 
     this.mappingRuleConfigString = JSON.stringify(retVal, null, 2);
