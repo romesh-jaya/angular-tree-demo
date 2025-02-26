@@ -218,7 +218,7 @@ export class AppComponent {
         truthTable.push({
           SourceColumn:
             (connection.inputSchemaParent
-              ? `${connection.inputSchemaParent}.`
+              ? `$.${connection.inputSchemaParent}.`
               : '$.') + connection.inputSchemaAttribute,
           DestinationColumn: connection.outputSchemaAttribute,
           DataType: this.getMappedDataType(connection.type) ?? connection.type,
@@ -230,7 +230,7 @@ export class AppComponent {
         retVal.MappingRuleConfig.TruthTable = truthTable;
       } else {
         retVal.MappingRuleConfig.TruthTable.push({
-          SourceColumn: '', // purposely left empty
+          SourceColumn: '', // purposely left empty to allow selecting nodes from any level
           DestinationColumn: key,
           DataType: OBJECT_TYPE,
           ComplexType: {
