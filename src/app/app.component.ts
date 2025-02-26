@@ -218,19 +218,10 @@ export class AppComponent {
       let truthTable: TruthTableMapping[] = [];
       connections.forEach((connection) => {
         // first create the truth table
-        let sourceColumn = '';
-
-        if (
-          (connection.outputSchemaParentNode?.label?.indexOf(OBJECT_TYPE) ??
-            -1) > -1
-        ) {
-          sourceColumn =
-            (connection.inputSchemaParent
-              ? `$.${connection.inputSchemaParent}.`
-              : '$.') + connection.inputSchemaAttribute;
-        } else {
-          sourceColumn = connection.inputSchemaAttribute;
-        }
+        let sourceColumn =
+          (connection.inputSchemaParent
+            ? `$.${connection.inputSchemaParent}.`
+            : '$.') + connection.inputSchemaAttribute;
 
         truthTable.push({
           SourceColumn: sourceColumn,
@@ -253,10 +244,6 @@ export class AppComponent {
         );
 
         if (sampleConnection) {
-          console.log(
-            'sampleConnection.outputSchemaParentNode?.label',
-            sampleConnection.outputSchemaParentNode?.label
-          );
           let isObjectType =
             (sampleConnection.outputSchemaParentNode?.label?.indexOf(
               OBJECT_TYPE
