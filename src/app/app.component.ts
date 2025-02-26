@@ -141,8 +141,8 @@ export class AppComponent {
     return treeInput;
   }
 
-  onInputNodeSelect($event, isInput: boolean) {
-    if (isInput) {
+  onInputNodeSelect($event, isInputTree: boolean) {
+    if (isInputTree) {
       this.selectedPathInputSchema = $event.node.data;
       this.selectedNodeExpectedInputSchema = $event.node;
     } else {
@@ -176,6 +176,7 @@ export class AppComponent {
     this.selectedPathExpectedOutputSchema = '';
     this.selectedPathInputSchema = '';
     if (this.selectedNodeExpectedOutputSchema) {
+      // Don't allow the same output node to be selected again
       this.selectedNodeExpectedOutputSchema.selectable = false;
       this.selectedNodeExpectedOutputSchema.icon = 'pi pi-fw pi-check';
     }
@@ -210,7 +211,6 @@ export class AppComponent {
 
     const keys = Object.keys(groupedResults);
     keys.forEach((key) => {
-      console.log('Mapping for key: ', key);
       let connections = groupedResults[key];
       let truthTable: TruthTableMapping[] = [];
       connections.forEach((connection) => {
@@ -228,7 +228,9 @@ export class AppComponent {
       // push the truth table at root level or nested level
       if (!key) {
         retVal.MappingRuleConfig.TruthTable = truthTable;
+        console.log('Mapping for root: ', truthTable);
       } else {
+        console.log('Mapping for key: ', key, truthTable);
         retVal.MappingRuleConfig.TruthTable.push({
           SourceColumn: '', // purposely left empty to allow selecting nodes from any level
           DestinationColumn: key,
@@ -267,7 +269,7 @@ export class AppComponent {
       })
       .subscribe(
         (val) => {
-          console.log('POST call successful value returned in body', val);
+          console.log('TestTransformation', val);
         },
         (response) => {
           alert(response.error);
