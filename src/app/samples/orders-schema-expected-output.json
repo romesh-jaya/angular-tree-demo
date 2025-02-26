@@ -55,18 +55,12 @@
             },
             "quantity": {
               "type": "integer"
-            },
-            "productprice": {
-              "type": "number"
             }
           },
           "required": [
-            "productId",
-            "name",
-            "quantity",
-            "price",
-            "image",
-            "color"
+            "id",
+            "productname",
+            "quantity"
           ]
         },
         {

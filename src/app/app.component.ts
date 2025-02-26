@@ -11,6 +11,7 @@ import {
 
 const OBJECT_TYPE = 'object';
 const ARRAY_TYPE = 'array';
+const JARRAY_TYPE = 'jarray';
 
 type Connection = {
   inputSchemaAttribute: string;
@@ -18,6 +19,7 @@ type Connection = {
   type: string;
   inputSchemaParent: string;
   outputSchemaParent: string;
+  outputSchemaParentNode?: TreeNode;
 };
 
 type DatatypeMap = {
@@ -40,7 +42,7 @@ export class AppComponent {
   connections: Connection[] = [];
   mappingRuleConfigString = '';
   allowedMimeTypes = ['application/json'];
-  backendNamespace = 'HT.Shared.Models.JsonToJson';
+  backendNamespace = 'HT.Shared.Utils.JsonToJsonMapper.Models.Examples';
   backendClassName = 'CustomerOrder';
   datatypeMap: DatatypeMap[] = [
     { inputType: 'integer', outputType: 'int' },
@@ -80,7 +82,7 @@ export class AppComponent {
         );
         treeInput.push({
           key: `${rootPropertyIndex}`,
-          label: item + ' (object)',
+          label: item + ` (${OBJECT_TYPE})`,
           icon: 'pi pi-fw pi-inbox',
           data: item,
           children: objectNode,
@@ -98,7 +100,7 @@ export class AppComponent {
           );
           treeInput.push({
             key: `${rootPropertyIndex}`,
-            label: item + ' (array)',
+            label: item + ` (${ARRAY_TYPE})`,
             data: item,
             icon: 'pi pi-fw pi-server',
             children: objectNode,
@@ -166,6 +168,7 @@ export class AppComponent {
         this.selectedNodeExpectedInputSchema?.parent?.data || '',
       outputSchemaParent:
         this.selectedNodeExpectedOutputSchema?.parent?.data || '',
+      outputSchemaParentNode: this.selectedNodeExpectedOutputSchema?.parent,
     });
 
     // sort by Output Schema Parent
@@ -215,11 +218,22 @@ export class AppComponent {
       let truthTable: TruthTableMapping[] = [];
       connections.forEach((connection) => {
         // first create the truth table
-        truthTable.push({
-          SourceColumn:
+        let sourceColumn = '';
+
+        if (
+          (connection.outputSchemaParentNode?.label?.indexOf(OBJECT_TYPE) ??
+            -1) > -1
+        ) {
+          sourceColumn =
             (connection.inputSchemaParent
               ? `$.${connection.inputSchemaParent}.`
-              : '$.') + connection.inputSchemaAttribute,
+              : '$.') + connection.inputSchemaAttribute;
+        } else {
+          sourceColumn = connection.inputSchemaAttribute;
+        }
+
+        truthTable.push({
+          SourceColumn: sourceColumn,
           DestinationColumn: connection.outputSchemaAttribute,
           DataType: this.getMappedDataType(connection.type) ?? connection.type,
         });
@@ -231,15 +245,39 @@ export class AppComponent {
         console.log('Mapping for root: ', truthTable);
       } else {
         console.log('Mapping for key: ', key, truthTable);
-        retVal.MappingRuleConfig.TruthTable.push({
-          SourceColumn: '', // purposely left empty to allow selecting nodes from any level
-          DestinationColumn: key,
-          DataType: OBJECT_TYPE,
-          ComplexType: {
-            DestinationType: `${this.backendNamespace}.${key}`,
-            TruthTable: truthTable,
-          },
-        });
+
+        let sourceColumn = '';
+        // Find a sample connection to get the parent node type
+        let sampleConnection = this.connections.find(
+          (item) => item.outputSchemaParent == key
+        );
+
+        if (sampleConnection) {
+          console.log(
+            'sampleConnection.outputSchemaParentNode?.label',
+            sampleConnection.outputSchemaParentNode?.label
+          );
+          let isObjectType =
+            (sampleConnection.outputSchemaParentNode?.label?.indexOf(
+              OBJECT_TYPE
+            ) ?? -1) > -1;
+          if (isObjectType) {
+            // purposely left empty to allow selecting nodes from any level
+            sourceColumn = '';
+          } else {
+            sourceColumn = `$.${sampleConnection.inputSchemaParent}`;
+          }
+
+          retVal.MappingRuleConfig.TruthTable.push({
+            SourceColumn: sourceColumn,
+            DestinationColumn: key,
+            DataType: isObjectType ? OBJECT_TYPE : JARRAY_TYPE,
+            ComplexType: {
+              DestinationType: `${this.backendNamespace}.${key}`,
+              TruthTable: truthTable,
+            },
+          });
+        }
       }
     });
 
