@@ -151,12 +151,44 @@ export class AppComponent {
     }
   }
 
+  isConnectionValid() {
+    let isInputParentOfArrayType = this.selectedNodeExpectedInputSchema?.parent
+      ? this.isParentNodeOfGivenType(
+          this.selectedNodeExpectedInputSchema?.parent,
+          ARRAY_TYPE
+        )
+      : false;
+
+    let isOutputParentOfArrayType = this.selectedNodeExpectedOutputSchema
+      ?.parent
+      ? this.isParentNodeOfGivenType(
+          this.selectedNodeExpectedOutputSchema?.parent,
+          ARRAY_TYPE
+        )
+      : false;
+
+    if (
+      (isInputParentOfArrayType && !isOutputParentOfArrayType) ||
+      (!isInputParentOfArrayType && isOutputParentOfArrayType)
+    ) {
+      alert('Cannot connect Array type with non-Array type');
+      return false;
+    }
+
+    return true;
+  }
+
   onConnectClicked() {
     let sourcePathArray = this.selectedPathInputSchema.split(' -> ');
     let sourcePath = sourcePathArray[sourcePathArray.length - 1];
     let destinationPathArray =
       this.selectedPathExpectedOutputSchema.split(' -> ');
     let destinationPath = destinationPathArray[destinationPathArray.length - 1];
+
+    // validations
+    if (!this.isConnectionValid()) {
+      return;
+    }
 
     this.connections.push({
       inputSchemaAttribute: sourcePath,
@@ -197,6 +229,10 @@ export class AppComponent {
     this.selectedNodeExpectedOutputSchema = undefined;
   }
 
+  isParentNodeOfGivenType(node: TreeNode, type: string) {
+    return (node?.label?.indexOf(type) ?? -1) > -1;
+  }
+
   generateMappingRuleConfig() {
     let retVal: { MappingRuleConfig: MappingRuleConfig } = {
       MappingRuleConfig: {
@@ -217,12 +253,18 @@ export class AppComponent {
       // Find a sample connection to get the parent node type
       let sampleConnection = connections[0];
 
-      let isParentOfObjectType =
-        (sampleConnection.outputSchemaParentNode?.label?.indexOf(OBJECT_TYPE) ??
-          -1) > -1;
-      let isParentOfArrayType =
-        (sampleConnection.outputSchemaParentNode?.label?.indexOf(ARRAY_TYPE) ??
-          -1) > -1;
+      let isParentOfObjectType = sampleConnection.outputSchemaParentNode
+        ? this.isParentNodeOfGivenType(
+            sampleConnection.outputSchemaParentNode,
+            OBJECT_TYPE
+          )
+        : false;
+      let isParentOfArrayType = sampleConnection.outputSchemaParentNode
+        ? this.isParentNodeOfGivenType(
+            sampleConnection.outputSchemaParentNode,
+            ARRAY_TYPE
+          )
+        : false;
 
       connections.forEach((connection) => {
         // first create the child level truth table
