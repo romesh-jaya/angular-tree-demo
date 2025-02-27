@@ -6,11 +6,9 @@ export type TruthTableMapping = {
 };
 
 export interface MappingRuleConfig {
-  DestinationType: string;
   TruthTable: TruthTableMapping[];
 }
 
 export interface ComplexType {
-  DestinationType: string;
   TruthTable: TruthTableMapping[];
 }

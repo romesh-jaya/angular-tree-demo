@@ -42,8 +42,6 @@ export class AppComponent {
   connections: Connection[] = [];
   mappingRuleConfigString = '';
   allowedMimeTypes = ['application/json'];
-  backendNamespace = 'HT.Shared.Utils.JsonToJsonMapper.Models.Examples';
-  backendClassName = 'CustomerOrder';
   datatypeMap: DatatypeMap[] = [
     { inputType: 'integer', outputType: 'int' },
     { inputType: 'number', outputType: 'long' },
@@ -202,7 +200,6 @@ export class AppComponent {
   generateMappingRuleConfig() {
     let retVal: { MappingRuleConfig: MappingRuleConfig } = {
       MappingRuleConfig: {
-        DestinationType: `${this.backendNamespace}.${this.backendClassName}`,
         TruthTable: [],
       },
     };
@@ -260,7 +257,6 @@ export class AppComponent {
             DestinationColumn: key,
             DataType: isObjectType ? OBJECT_TYPE : JARRAY_TYPE,
             ComplexType: {
-              DestinationType: `${this.backendNamespace}.${key}`,
               TruthTable: truthTable,
             },
           });
