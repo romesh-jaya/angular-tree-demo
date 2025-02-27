@@ -248,10 +248,10 @@ export class AppComponent {
 
     const keys = Object.keys(groupedResults);
     keys.forEach((key) => {
-      let connections = groupedResults[key];
+      let connectionsForKey = groupedResults[key];
       let childTruthTable: TruthTableMapping[] = [];
       // Find a sample connection to get the parent node type
-      let sampleConnection = connections[0];
+      let sampleConnection = connectionsForKey[0];
       let isParentOfObjectType = sampleConnection.outputSchemaParentNode
         ? this.isParentNodeOfGivenType(
             sampleConnection.outputSchemaParentNode,
@@ -266,7 +266,7 @@ export class AppComponent {
         : false;
 
       childTruthTable = this.populateChildTruthTable(
-        connections,
+        connectionsForKey,
         isParentOfArrayType
       );
 
