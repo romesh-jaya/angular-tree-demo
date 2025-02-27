@@ -11,4 +11,6 @@ export interface MappingRuleConfig {
 
 export interface ComplexType {
   TruthTable: TruthTableMapping[];
+  Node?: string;
+  DataType?: string;
 }

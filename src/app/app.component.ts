@@ -213,15 +213,32 @@ export class AppComponent {
     keys.forEach((key) => {
       let connections = groupedResults[key];
       let truthTable: TruthTableMapping[] = [];
+
+      // Find a sample connection to get the parent node type
+      let sampleConnection = connections[0];
+
+      let isParentOfObjectType =
+        (sampleConnection.outputSchemaParentNode?.label?.indexOf(OBJECT_TYPE) ??
+          -1) > -1;
+      let isParentOfArrayType =
+        (sampleConnection.outputSchemaParentNode?.label?.indexOf(ARRAY_TYPE) ??
+          -1) > -1;
+
       connections.forEach((connection) => {
-        // first create the truth table
-        let sourceColumn =
-          (connection.inputSchemaParent
-            ? `$.${connection.inputSchemaParent}.`
-            : '$.') + connection.inputSchemaAttribute;
+        // first create the child level truth table
+        let sourceColumnChild = '';
+
+        if (isParentOfArrayType) {
+          sourceColumnChild = `$.${connection.inputSchemaAttribute}`;
+        } else {
+          sourceColumnChild =
+            (connection.inputSchemaParent
+              ? `$.${connection.inputSchemaParent}.`
+              : '$.') + connection.inputSchemaAttribute;
+        }
 
         truthTable.push({
-          SourceColumn: sourceColumn,
+          SourceColumn: sourceColumnChild,
           DestinationColumn: connection.outputSchemaAttribute,
           DataType: this.getMappedDataType(connection.type) ?? connection.type,
         });
@@ -229,38 +246,32 @@ export class AppComponent {
 
       // push the truth table at root level or nested level
       if (!key) {
+        console.log('Mapping for root level: ', truthTable);
         retVal.MappingRuleConfig.TruthTable = truthTable;
-        console.log('Mapping for root: ', truthTable);
       } else {
         console.log('Mapping for key: ', key, truthTable);
 
-        let sourceColumn = '';
-        // Find a sample connection to get the parent node type
-        let sampleConnection = this.connections.find(
-          (item) => item.outputSchemaParent == key
-        );
+        let sourceColumnParent = '';
 
-        if (sampleConnection) {
-          let isObjectType =
-            (sampleConnection.outputSchemaParentNode?.label?.indexOf(
-              OBJECT_TYPE
-            ) ?? -1) > -1;
-          if (isObjectType) {
-            // purposely left empty to allow selecting nodes from any level
-            sourceColumn = '';
-          } else {
-            sourceColumn = `$.${sampleConnection.inputSchemaParent}`;
-          }
-
-          retVal.MappingRuleConfig.TruthTable.push({
-            SourceColumn: sourceColumn,
-            DestinationColumn: key,
-            DataType: isObjectType ? OBJECT_TYPE : JARRAY_TYPE,
-            ComplexType: {
-              TruthTable: truthTable,
-            },
-          });
+        if (isParentOfObjectType) {
+          // purposely left empty to allow selecting nodes from any level
+          sourceColumnParent = '';
+        } else if (isParentOfArrayType) {
+          sourceColumnParent = `$.${sampleConnection.inputSchemaParent}[*]`;
+        } else {
+          sourceColumnParent = `$.${sampleConnection.inputSchemaParent}`;
         }
+
+        retVal.MappingRuleConfig.TruthTable.push({
+          SourceColumn: sourceColumnParent,
+          DestinationColumn: key,
+          DataType: isParentOfObjectType ? OBJECT_TYPE : JARRAY_TYPE,
+          ComplexType: {
+            TruthTable: truthTable,
+            ...(isParentOfArrayType && { Node: sourceColumnParent }),
+            ...(isParentOfArrayType && { DataType: JARRAY_TYPE }),
+          },
+        });
       }
     });
 
