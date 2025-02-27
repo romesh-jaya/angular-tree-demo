@@ -240,6 +240,7 @@ export class AppComponent {
       },
     };
 
+    // get connections grouped by output schema parent
     const groupedResults = this.groupBy(
       this.connections,
       (item) => item.outputSchemaParent
