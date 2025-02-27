@@ -249,11 +249,9 @@ export class AppComponent {
     const keys = Object.keys(groupedResults);
     keys.forEach((key) => {
       let connections = groupedResults[key];
-      let truthTable: TruthTableMapping[] = [];
-
+      let childTruthTable: TruthTableMapping[] = [];
       // Find a sample connection to get the parent node type
       let sampleConnection = connections[0];
-
       let isParentOfObjectType = sampleConnection.outputSchemaParentNode
         ? this.isParentNodeOfGivenType(
             sampleConnection.outputSchemaParentNode,
@@ -267,32 +265,17 @@ export class AppComponent {
           )
         : false;
 
-      connections.forEach((connection) => {
-        // first create the child level truth table
-        let sourceColumnChild = '';
-
-        if (isParentOfArrayType) {
-          sourceColumnChild = `$.${connection.inputSchemaAttribute}`;
-        } else {
-          sourceColumnChild =
-            (connection.inputSchemaParent
-              ? `$.${connection.inputSchemaParent}.`
-              : '$.') + connection.inputSchemaAttribute;
-        }
-
-        truthTable.push({
-          SourceColumn: sourceColumnChild,
-          DestinationColumn: connection.outputSchemaAttribute,
-          DataType: this.getMappedDataType(connection.type) ?? connection.type,
-        });
-      });
+      childTruthTable = this.populateChildTruthTable(
+        connections,
+        isParentOfArrayType
+      );
 
       // push the truth table at root level or nested level
       if (!key) {
-        console.log('Mapping for root level: ', truthTable);
-        retVal.MappingRuleConfig.TruthTable = truthTable;
+        console.log('Mapping for root level: ', childTruthTable);
+        retVal.MappingRuleConfig.TruthTable = childTruthTable;
       } else {
-        console.log('Mapping for key: ', key, truthTable);
+        console.log('Mapping for key: ', key, childTruthTable);
 
         let sourceColumnParent = '';
 
@@ -310,7 +293,7 @@ export class AppComponent {
           DestinationColumn: key,
           DataType: isParentOfObjectType ? OBJECT_TYPE : JARRAY_TYPE,
           ComplexType: {
-            TruthTable: truthTable,
+            TruthTable: childTruthTable,
             ...(isParentOfArrayType && { Node: sourceColumnParent }),
             ...(isParentOfArrayType && { DataType: JARRAY_TYPE }),
           },
@@ -319,6 +302,33 @@ export class AppComponent {
     });
 
     this.mappingRuleConfigString = JSON.stringify(retVal, null, 2);
+  }
+
+  populateChildTruthTable(
+    connections: Connection[],
+    isParentOfArrayType: boolean
+  ) {
+    let truthTable: TruthTableMapping[] = [];
+    connections.forEach((connection) => {
+      let sourceColumnChild = '';
+
+      if (isParentOfArrayType) {
+        sourceColumnChild = `$.${connection.inputSchemaAttribute}`;
+      } else {
+        sourceColumnChild =
+          (connection.inputSchemaParent
+            ? `$.${connection.inputSchemaParent}.`
+            : '$.') + connection.inputSchemaAttribute;
+      }
+
+      truthTable.push({
+        SourceColumn: sourceColumnChild,
+        DestinationColumn: connection.outputSchemaAttribute,
+        DataType: this.getMappedDataType(connection.type) ?? connection.type,
+      });
+    });
+
+    return truthTable;
   }
 
   getMappedDataType(inputType: string) {
